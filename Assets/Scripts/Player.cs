@@ -1,24 +1,23 @@
-using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public StateMachine stateMachine {get; private set;}
-    private EntityState idleState;
+    public StateMachine StateMachine {get; private set;}
+    private EntityState _idleState;
     
     private void Awake()
     {
-        stateMachine = new StateMachine();
-        idleState = new EntityState(stateMachine, "Idle state");
+        StateMachine = new StateMachine();
+        _idleState = new EntityState(StateMachine, "Idle state");
     }
 
     private void Start()
     {
-        stateMachine.Initialize(idleState);
+        StateMachine.Initialize(_idleState);
     }
 
     private void Update()
     {
-        stateMachine.CurrentState.Update();
+        StateMachine.CurrentState.Update();
     }
 }
