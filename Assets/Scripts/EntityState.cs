@@ -2,32 +2,34 @@
 
 using UnityEngine;
 
-public class EntityState 
+public abstract class EntityState 
 {
-    protected StateMachine stateMachine;
-    protected string stateName;
+    protected Player Player;
+    protected StateMachine StateMachine;
+    protected string StateName;
 
-    public EntityState(StateMachine stateMachine, string stateName)
+    public EntityState(Player player, StateMachine stateMachine, string stateName)
     {
-        this.stateMachine = stateMachine;
-        this.stateName = stateName;
+        Player = player;
+        StateMachine = stateMachine;
+        StateName = stateName;
     }
 
     public virtual void Enter()
     {
         // Everytime, the current state will be changed. Enter will be called
-        Debug.Log(" I enter" + stateName);
+        Debug.Log(" I enter" + StateName);
     }
 
     public virtual void Update()
     {
         // We're going to run the logic of the state here
-        Debug.Log(" I run update of" + stateName);
+        Debug.Log(" I run update of" + StateName);
     }
 
     public virtual void Exit()
     {
         // This will be called everytime we exit the state and change to a new one
-        Debug.Log(" I exit" + stateName);
+        Debug.Log(" I exit" + StateName);
     }
 }
