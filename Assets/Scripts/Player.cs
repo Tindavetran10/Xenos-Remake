@@ -28,8 +28,15 @@ public class Player : MonoBehaviour
     [Header("Jump details")]
     public float jumpForce;
     public float jumpCutMultiplier;
+    
+    [Header("Jump Buffer")]
     [SerializeField] private float jumpBufferWindow = 0.2f; //How long the jump buffer last
     private float _jumpBufferTimer; // Countdown the timer for buffered input
+    
+    [Header("Coyote Time")]
+    [SerializeField] private float coyoteTimeWindow = 0.2f;
+    private float _coyoteTimer;
+    private bool _wasGroundedLastFrame;
     #endregion
 
     #region Collision Detection
@@ -74,14 +81,25 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        bool previouslyGrounded = GroundDetected;
         HandleCollisionDetection();
         
-        if(_jumpBufferTimer > 0f) 
-            _jumpBufferTimer -= Time.deltaTime;
+        if(GroundDetected)
+            _coyoteTimer = coyoteTimeWindow;
+        else if (previouslyGrounded && !GroundDetected)
+        {
+            if(StateMachine.CurrentState != PlayerJumpState)
+                _coyoteTimer = coyoteTimeWindow;
+        }
+        else if (_coyoteTimer > 0)
+            _coyoteTimer -= Time.deltaTime;
+        
+        
+        JumpBufferCalculator();
         
         StateMachine.UpdateActiveState();
-        
     }
+
 
     #endregion
 
@@ -90,6 +108,11 @@ public class Player : MonoBehaviour
     {
         Rb.linearVelocity = new Vector2(xVelocity, yVelocity);
         FlipHandler(xVelocity);
+    }
+    private void JumpBufferCalculator()
+    {
+        if(_jumpBufferTimer > 0f) 
+            _jumpBufferTimer -= Time.deltaTime;
     }
     #endregion
 
@@ -116,6 +139,8 @@ public class Player : MonoBehaviour
     private void HandleCollisionDetection() => 
         GroundDetected = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
 
+    public bool CanJump() => GroundDetected || HasCoyoteTime();
+    
     private void OnDrawGizmos() => Gizmos.DrawLine(transform.position, transform.position + new Vector3(0, -groundCheckDistance, 0));
 
     #endregion
@@ -123,5 +148,8 @@ public class Player : MonoBehaviour
     #region Helper Method
     public bool HasJumpBuffered() => _jumpBufferTimer > 0f;
     public void ConsumeJumpBuffer() => _jumpBufferTimer = 0f;
+    
+    public bool HasCoyoteTime() => _coyoteTimer > 0f;
+    public void ConsumeCoyoteTime() => _coyoteTimer = 0f;
     #endregion
 }

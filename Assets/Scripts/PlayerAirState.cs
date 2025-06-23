@@ -10,8 +10,13 @@ public class PlayerAirState : EntityState
         
         if(Player.MoveInput.x != 0)
             Player.SetVelocity(Player.MoveInput.x * Player.moveSpeed * Player.inAirMultiplier, PlayerRigidbody.linearVelocity.y);
-        
-        
+
+        if (PlayerInputSet.Player.Jump.WasPerformedThisFrame() || Player.HasJumpBuffered() && Player.HasCoyoteTime())
+        {
+            Player.ConsumeJumpBuffer();
+            Player.ConsumeCoyoteTime();
+            StateMachine.ChangeState(Player.PlayerJumpState);
+        }
     }
     
     
