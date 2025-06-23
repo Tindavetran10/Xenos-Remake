@@ -30,12 +30,12 @@ public class Player : MonoBehaviour
     public float jumpCutMultiplier;
     
     [Header("Jump Buffer")]
-    [SerializeField] private float jumpBufferWindow = 0.2f; //How long the jump buffer last
+    [SerializeField] private float jumpBufferWindow = 0.2f; //How longs the jump buffer last
     private float _jumpBufferTimer; // Countdown the timer for buffered input
     
     [Header("Coyote Time")]
-    [SerializeField] private float coyoteTimeWindow = 0.2f;
-    private float _coyoteTimer;
+    [SerializeField] private float coyoteTimeWindow = 0.2f; //How longs the coyote time last
+    private float _coyoteTimer; // Countdown the timer for coyote time
     private bool _wasGroundedLastFrame;
     #endregion
 
@@ -81,7 +81,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        bool previouslyGrounded = GroundDetected;
+        var previouslyGrounded = GroundDetected;
         HandleCollisionDetection();
         
         if(GroundDetected)

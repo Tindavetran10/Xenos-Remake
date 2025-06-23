@@ -12,9 +12,6 @@ public class PlayerGroundedState : EntityState
         if(PlayerRigidbody.linearVelocity.y < 0 && !Player.GroundDetected)
             StateMachine.ChangeState(Player.PlayerFallState);
         
-        // Because the Raycast of GroundDetected is slightly longer than the Player's sprite,
-        // Therefore, the Player is already switched to Grounded State before the Player's sprite change, So
-        //  we can also use the Raycast to register the Jump Input just before the Player's sprite change
         if (PlayerInputSet.Player.Jump.WasPressedThisFrame() || Player.HasJumpBuffered() && Player.CanJump())
         {
             Player.ConsumeJumpBuffer();
