@@ -16,9 +16,13 @@ public class PlayerJumpState : PlayerAirState
     public override void Update()
     {
         base.Update();
-        if (PlayerRigidbody.linearVelocity.y < 0)
-        {
+        
+        // Jump Cut: If the player releases the jump button while still ascending, reduce velocity
+        if (!PlayerInputSet.Player.Jump.IsPressed() && PlayerRigidbody.linearVelocity.y > 0)
+            Player.SetVelocity(PlayerRigidbody.linearVelocity.x, 
+                PlayerRigidbody.linearVelocity.y * Player.jumpCutMultiplier);
+        
+        if (PlayerRigidbody.linearVelocity.y < 0) 
             StateMachine.ChangeState(Player.PlayerFallState);
-        }
     }
 }

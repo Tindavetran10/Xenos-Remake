@@ -8,11 +8,10 @@ public class PlayerGroundedState : EntityState
     {
         base.Update();
         
+        // Prevent Player staying in Idle State when falling
         if(PlayerRigidbody.linearVelocity.y < 0)
             StateMachine.ChangeState(Player.PlayerFallState);
-        if (PlayerInputSet.Player.Jump.WasPressedThisFrame())
-        {
+        if (PlayerInputSet.Player.Jump.WasPressedThisFrame()) 
             StateMachine.ChangeState(new PlayerJumpState(Player, StateMachine, "jumpfall"));
-        }
     }
 }

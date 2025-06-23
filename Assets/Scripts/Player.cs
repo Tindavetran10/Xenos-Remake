@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
     [Header("Movement details")]
     public float moveSpeed;
     public float jumpForce;
+    public float jumpCutMultiplier;
     private bool _isFacingRight = true;
     [Range(0F ,1F)] public float inAirMultiplier;
     #endregion

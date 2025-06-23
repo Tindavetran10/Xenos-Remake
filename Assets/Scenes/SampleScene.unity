@@ -523,11 +523,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 8
   jumpForce: 12
+  jumpCutMultiplier: 0.5
+  inAirMultiplier: 0.65
   groundCheckDistance: 0.75
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
-  groundDetected: 0
 --- !u!50 &1487008333
 Rigidbody2D:
   serializedVersion: 5
