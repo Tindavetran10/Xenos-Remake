@@ -22,10 +22,14 @@ public class Player : MonoBehaviour
     #region Movement Configuration
     [Header("Movement details")]
     public float moveSpeed;
-    public float jumpForce;
-    public float jumpCutMultiplier;
     private bool _isFacingRight = true;
     [Range(0F ,1F)] public float inAirMultiplier;
+    
+    [Header("Jump details")]
+    public float jumpForce;
+    public float jumpCutMultiplier;
+    [SerializeField] private float jumpBufferWindow = 0.2f; //How long the jump buffer last
+    private float _jumpBufferTimer; // Countdown the timer for buffered input
     #endregion
 
     #region Collision Detection
@@ -60,6 +64,8 @@ public class Player : MonoBehaviour
 
         Input.Player.Movement.performed += context => MoveInput = context.ReadValue<Vector2>();
         Input.Player.Movement.canceled += context => MoveInput = Vector2.zero;
+
+        Input.Player.Jump.performed += context => _jumpBufferTimer = jumpBufferWindow;
     }
 
     private void OnDisable() => Input.Disable();
@@ -69,7 +75,12 @@ public class Player : MonoBehaviour
     private void Update()
     {
         HandleCollisionDetection();
+        
+        if(_jumpBufferTimer > 0f) 
+            _jumpBufferTimer -= Time.deltaTime;
+        
         StateMachine.UpdateActiveState();
+        
     }
 
     #endregion
@@ -102,12 +113,15 @@ public class Player : MonoBehaviour
         _isFacingRight = !_isFacingRight;
     }
 
-    private void HandleCollisionDetection()
-    {
+    private void HandleCollisionDetection() => 
         GroundDetected = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
-    }
 
     private void OnDrawGizmos() => Gizmos.DrawLine(transform.position, transform.position + new Vector3(0, -groundCheckDistance, 0));
 
+    #endregion
+    
+    #region Helper Method
+    public bool HasJumpBuffered() => _jumpBufferTimer > 0f;
+    public void ConsumeJumpBuffer() => _jumpBufferTimer = 0f;
     #endregion
 }
