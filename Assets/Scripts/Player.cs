@@ -2,25 +2,39 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    #region Components and References
     public Animator Animator { get; private set; }
     public Rigidbody2D Rb { get; private set; }
-    
-    public PlayerInputSet Input { get; private set; }
-    public StateMachine StateMachine {get; private set;}
-    
-    public PlayerIdleState PlayerIdleState {get; private set;}
-    public PlayerMoveState PlayerMoveState {get; private set;}
+    #endregion
 
-    public PlayerJumpState PlayerJumpState {get; private set;}
-    public PlayerFallState PlayerFallState {get; private set;}
+    #region Input and State Management
+    public PlayerInputSet Input { get; private set; }
+    public StateMachine StateMachine { get; private set; }
     
+    public PlayerIdleState PlayerIdleState { get; private set; }
+    public PlayerMoveState PlayerMoveState { get; private set; }
+    public PlayerJumpState PlayerJumpState { get; private set; }
+    public PlayerFallState PlayerFallState { get; private set; }
+    
+    public Vector2 MoveInput { get; private set; }
+    #endregion
+
+    #region Movement Configuration
     [Header("Movement details")]
     public float moveSpeed;
     public float jumpForce;
     private bool _isFacingRight = true;
-    
-    public Vector2 MoveInput {get; private set; }
-    
+    [Range(0F ,1F)] public float inAirMultiplier;
+    #endregion
+
+    #region Collision Detection
+    [Header("Collision detection")]
+    [SerializeField] private float groundCheckDistance;
+    [SerializeField] private LayerMask whatIsGround;
+    public bool GroundDetected { get; private set; }
+    #endregion
+
+    #region Unity Life Cycle
     private void Awake()
     {
         Animator = GetComponentInChildren<Animator>();
@@ -51,15 +65,23 @@ public class Player : MonoBehaviour
 
     private void Start() => StateMachine.Initialize(PlayerIdleState);
 
-    private void Update() => StateMachine.UpdateActiveState();
+    private void Update()
+    {
+        HandleCollisionDetection();
+        StateMachine.UpdateActiveState();
+    }
 
+    #endregion
+
+    #region Movement Methods
     public void SetVelocity(float xVelocity, float yVelocity)
     {
         Rb.linearVelocity = new Vector2(xVelocity, yVelocity);
         FlipHandler(xVelocity);
     }
+    #endregion
 
-
+    #region Utility Methods
     private void FlipHandler(float xVelocity)
     {
         // if the player moving right and not facing right / facing left,
@@ -78,4 +100,13 @@ public class Player : MonoBehaviour
         transform.Rotate(0, 180, 0);
         _isFacingRight = !_isFacingRight;
     }
+
+    private void HandleCollisionDetection()
+    {
+        GroundDetected = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
+    }
+
+    private void OnDrawGizmos() => Gizmos.DrawLine(transform.position, transform.position + new Vector3(0, -groundCheckDistance, 0));
+
+    #endregion
 }
