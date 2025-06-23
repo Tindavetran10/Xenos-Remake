@@ -1,17 +1,18 @@
 // This will be a base class for all character's states in the game
-
 using UnityEngine;
 
 public abstract class EntityState 
 {
+    private static readonly int YVelocity = Animator.StringToHash("yVelocity");
     protected Player Player;
     protected StateMachine StateMachine;
     protected string AnimBoolName;
     
     protected Animator PlayerAnimator;
     protected Rigidbody2D PlayerRigidbody;
-    
-    public EntityState(Player player, StateMachine stateMachine, string animBoolName)
+    protected PlayerInputSet PlayerInputSet;
+
+    protected EntityState(Player player, StateMachine stateMachine, string animBoolName)
     {
         Player = player;
         StateMachine = stateMachine;
@@ -19,6 +20,7 @@ public abstract class EntityState
         
         PlayerAnimator = Player.Animator;
         PlayerRigidbody = Player.Rb;
+        PlayerInputSet = Player.Input;
     }
 
     public virtual void Enter()
@@ -32,6 +34,9 @@ public abstract class EntityState
     {
         // We're going to run the logic of the state here
         //Debug.Log("I run update of" + AnimBoolName);
+        
+        // This will handle the switching between Jump and Fall BlendTree from Player's AC
+        PlayerAnimator.SetFloat(YVelocity, PlayerRigidbody.linearVelocity.y);
     }
 
     public virtual void Exit()
