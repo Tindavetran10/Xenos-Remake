@@ -139,7 +139,7 @@ public class Player : MonoBehaviour
     private void HandleCollisionDetection() => 
         GroundDetected = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
 
-    public bool CanJump() => GroundDetected || HasCoyoteTime();
+    public bool CanJump() => (GroundDetected && HasJumpBuffered()) || HasCoyoteTime();
     
     private void OnDrawGizmos() => Gizmos.DrawLine(transform.position, transform.position + new Vector3(0, -groundCheckDistance, 0));
 

@@ -12,7 +12,7 @@ public class PlayerGroundedState : EntityState
         if(PlayerRigidbody.linearVelocity.y < 0 && !Player.GroundDetected)
             StateMachine.ChangeState(Player.PlayerFallState);
         
-        if (PlayerInputSet.Player.Jump.WasPressedThisFrame() || Player.HasJumpBuffered() && Player.CanJump())
+        if (PlayerInputSet.Player.Jump.WasPressedThisFrame() && Player.CanJump())
         {
             Player.ConsumeJumpBuffer();
             Player.ConsumeCoyoteTime();
